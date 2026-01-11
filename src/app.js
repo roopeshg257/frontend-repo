@@ -1,4 +1,4 @@
-fetch('https://api.yourdomain.com/users')
+fetch('https://www.sumitha.space')
   .then(res => res.json())
   .then(data => {
     document.getElementById("data").innerHTML =
