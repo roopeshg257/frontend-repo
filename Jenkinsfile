@@ -1,44 +1,34 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    S3_BUCKET = "my-frontend-devops-app"
-    AWS_REGION = "ap-south-1"
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        git 'https://github.com/your-username/aws-devops-microservices-project.git'
-      }
+    environment {
+        AWS_DEFAULT_REGION = 'us-east-1'
+        S3_BUCKET = 'project-frontend-bucket-10-11-25 '
     }
 
-    stage('Build') {
-      steps {
-        sh '''
-          cd frontend
-          npm install
-          npm run build
-        '''
-      }
-    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/roopeshg257/frontend-repo.git',
+                    credentialsId: 'frontend'
+            }
+        }
 
-    stage('Upload to S3') {
-      steps {
-        sh '''
-          aws s3 sync frontend/build s3://$S3_BUCKET --delete
-        '''
-      }
-    }
+        stage('Build React') {
+            steps {
+                sh 'chmod +x build.sh'
+                sh './build.sh'
+            }
+        }
 
-    stage('Invalidate CloudFront') {
-      steps {
-        sh '''
-          aws cloudfront create-invalidation \
-          --distribution-id E123456789 \
-          --paths "/*"
-        '''
-      }
+        stage('Deploy to S3 & Invalidate CloudFront') {
+            steps {
+                withAWS(credentials: 'aws-credentials', region: 'us-east-1') {
+                    sh 'aws s3 sync build/ s3://$S3_BUCKET --delete'
+                    sh 'aws cloudfront create-invalidation --distribution-id E28B08W45JIKSL --paths "/*"'
+                }
+            }
+        }
     }
-  }
 }
