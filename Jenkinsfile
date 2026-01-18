@@ -11,7 +11,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/roopeshg257/frontend-repo.git',
-                    credentialsId: 'e5303cbf-9b0a-4310-a8b2-6d00824c1d91'
+                    credentialsId: 'awsid'
             }
         }
 
@@ -24,7 +24,7 @@ pipeline {
 
         stage('Deploy to S3 & Invalidate CloudFront') {
             steps {
-                withAWS(credentials: 'e5303cbf-9b0a-4310-a8b2-6d00824c1d91', region: 'us-east-1') {
+                withAWS(credentials: 'awsid', region: 'us-east-1') {
                     sh 'aws s3 sync build/ s3://$S3_BUCKET --delete'
                     sh 'aws cloudfront create-invalidation --distribution-id E28B08W45JIKSL --paths "/*"'
                 }
