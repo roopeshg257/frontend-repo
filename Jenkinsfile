@@ -11,7 +11,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/roopeshg257/frontend-repo.git',
-                    credentialsId: 'frontend'
+                    credentialsId: 'e5303cbf-9b0a-4310-a8b2-6d00824c1d91'
             }
         }
 
